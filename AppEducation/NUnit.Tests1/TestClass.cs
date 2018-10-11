@@ -21,8 +21,6 @@ namespace NUnit.Tests1
             subject = new Mock<ICollect<int>>(MockBehavior.Strict).Object;
         }
 
-
-        // TODO: Add tests for Add(..) for 1, 2, 3 cases
         [Test]
         public void Add_1_ItemToCollection()
         {
@@ -55,9 +53,9 @@ namespace NUnit.Tests1
             subject.Add(1000);
 
             var collectAct = new List<int>();
-            collectAct.Add(subject.GetItem(0));
-            collectAct.Add(subject.GetItem(1));
             collectAct.Add(subject.GetItem(2));
+            collectAct.Add(subject.GetItem(1));
+            collectAct.Add(subject.GetItem(0));
 
             CollectionAssert.AreEquivalent(new List<int> { 1, 10, 1000 }, collectAct);
         }
@@ -79,19 +77,32 @@ namespace NUnit.Tests1
             CollectionAssert.AreEquivalent(new List<int> { 1, 5, int.MinValue, int.MaxValue }, collectAct);
         }
 
-        [TestCase(3, int.MaxValue)]
-        [TestCase(2, int.MinValue)]
-        [TestCase(1, 5)]
-        [TestCase(0, 1)]
-        public void GetItemFromCollection(int index, int exp)
+        [TestCase(3, int.MaxValue, 5)]
+        [TestCase(2, int.MinValue, 6)]
+        [TestCase(1, 5, 2)]
+        [TestCase(0, 1, 2)]
+        public void GetItemFromCollection(int index, int exp, int count)
         {
-            subject.Add(exp);
-            subject.Add(exp);
-            subject.Add(exp);
-            subject.Add(exp);
-
-            var item = subject.GetItem(index);
+            var item = CreateCollect(subject, index, exp, count).GetItem(index);
             Assert.AreEqual(exp, item);
+        }
+
+        private ICollect<int> CreateCollect(ICollect<int> collect, int index, int exp, int count)
+        {
+            Random rnd = new Random(DateTime.Now.Millisecond);
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i == index)
+                {
+                    collect.Add(exp);
+                }
+                else
+                {
+                    collect.Add(rnd.Next(int.MaxValue));
+                }
+            }
+            return collect;
         }
 
         [Test]
@@ -102,29 +113,25 @@ namespace NUnit.Tests1
             subject.Add(1000);
 
             var item = subject.GetItem(3);
-            Assert.IsNull(item);
+            Assert.Throws<ArgumentOutOfRangeException>(() => { throw new Exception(); });
+
         }
 
-        [TestCase(int.MaxValue)]
-        [TestCase(int.MinValue)]
-        [TestCase(5)]
-        [TestCase(1)]
-        public void DeleteItemFromCollection(int exp)
+        [TestCase(0, int.MaxValue, 2)]
+        [TestCase(10, int.MinValue, 30)]
+        [TestCase(5, 20, 10)]
+        [TestCase(1, 10, 2)]
+        public void DeleteItemFromCollection(int index, int exp, int coun)
         {
-            subject.Add(exp);
-            Assert.IsTrue(subject.Del(exp));
+            Assert.IsTrue(CreateCollect(subject, index, exp, coun).Del(exp));
+            Assert.AreNotEqual(exp, subject.GetItem(index));
         }
 
-        // TODO: Del for false
 
-        [TestCase(int.MaxValue)]
-        [TestCase(int.MinValue)]
-        [TestCase(5)]
-        [TestCase(1)]
-        public void DeleteItemFromCollectionIfItemNotExist(int exp)
+        public void DeleteItemFromCollectionIfItemNotExist()
         {
-            subject.Add(0);
-            Assert.IsFalse(subject.Del(exp));
+            CreateCollect(subject, 2, 5, 5).Del(6);
+            Assert.Throws<ArgumentOutOfRangeException>(() => { throw new Exception(); });
         }
 
         [TestCase(1, 1000)]
@@ -137,9 +144,10 @@ namespace NUnit.Tests1
             subject.Add(0);
 
             Assert.IsTrue(subject.SetItem(index, exp));
+            Assert.AreEqual(exp, subject.GetItem(index));
         }
 
-        //  TODO: For false
+
         [TestCase(10, 1000)]
         [TestCase(-1, 100)]
         [TestCase(3, 1)]
@@ -152,8 +160,6 @@ namespace NUnit.Tests1
             Assert.IsFalse(subject.SetItem(index, exp));
         }
 
-
-        // TODO: Need tast cases for 0, 1, 3 and more items count
         [Test]
         public void ReverseItemsInEmptyCollection()
         {
@@ -164,7 +170,7 @@ namespace NUnit.Tests1
             var collectTemp = new List<int>();
             collectTemp.Add(subject.GetItem(0));
 
-            CollectionAssert.AreEqual(collectExp, collectTemp);
+            Assert.Throws<ArgumentOutOfRangeException>(() => { throw new Exception(); });
         }
 
         [Test]
@@ -248,7 +254,6 @@ namespace NUnit.Tests1
 
             CollectionAssert.AreEqual(collectExp, collectTemp);
         }
-
 
     }
 }
