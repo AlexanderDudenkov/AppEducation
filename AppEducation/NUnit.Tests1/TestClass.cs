@@ -19,7 +19,7 @@ namespace NUnit.Tests1
         public void BeforeTestSuit()
         {
             //subject = new Mock<ICollect<int>>(MockBehavior.Strict).Object;
-            subject = new CollectInt();
+            subject = new CollectIntRev();
         }
 
         [Test]
@@ -124,8 +124,7 @@ namespace NUnit.Tests1
         public void DeleteItemFromCollection(int index, int exp, int coun)
         {
             Assert.IsTrue(CreateCollect(subject, index, exp, coun).Del(exp));
-            //Assert.AreNotEqual(exp, subject.GetItem(index));
-        }
+                    }
 
 
         public void DeleteItemFromCollectionIfItemNotExist()

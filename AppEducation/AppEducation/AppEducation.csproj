@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollectInt.cs" />
+    <Compile Include="CollectIntRev.cs" />
     <Compile Include="ICollect.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

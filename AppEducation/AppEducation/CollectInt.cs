@@ -10,7 +10,7 @@ namespace AppEducation
     {
         private List<int> collect = new List<int>();
 
-        public void Add(int item)
+        public virtual void Add(int item)
         {
             collect.Add(item);
         }
