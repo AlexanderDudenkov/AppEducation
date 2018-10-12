@@ -18,7 +18,8 @@ namespace NUnit.Tests1
         [SetUp]
         public void BeforeTestSuit()
         {
-            subject = new Mock<ICollect<int>>(MockBehavior.Strict).Object;
+            //subject = new Mock<ICollect<int>>(MockBehavior.Strict).Object;
+            subject = new CollectInt();
         }
 
         [Test]
@@ -112,8 +113,7 @@ namespace NUnit.Tests1
             subject.Add(10);
             subject.Add(1000);
 
-            var item = subject.GetItem(3);
-            Assert.Throws<ArgumentOutOfRangeException>(() => { throw new Exception(); });
+            Assert.Throws<ArgumentOutOfRangeException>(() => subject.GetItem(3));
 
         }
 
@@ -124,7 +124,7 @@ namespace NUnit.Tests1
         public void DeleteItemFromCollection(int index, int exp, int coun)
         {
             Assert.IsTrue(CreateCollect(subject, index, exp, coun).Del(exp));
-            Assert.AreNotEqual(exp, subject.GetItem(index));
+            //Assert.AreNotEqual(exp, subject.GetItem(index));
         }
 
 
@@ -163,14 +163,9 @@ namespace NUnit.Tests1
         [Test]
         public void ReverseItemsInEmptyCollection()
         {
-            subject.Reverse();
-
-            var collectExp = new List<int>();
-
-            var collectTemp = new List<int>();
-            collectTemp.Add(subject.GetItem(0));
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => { throw new Exception(); });
+            var expColl = subject.Reverse();
+            Assert.AreEqual(subject, expColl);
+            Assert.DoesNotThrow(() => subject.Reverse());
         }
 
         [Test]
@@ -255,5 +250,10 @@ namespace NUnit.Tests1
             CollectionAssert.AreEqual(collectExp, collectTemp);
         }
 
+        [TearDown]
+        public void Aftertestsuit()
+        {
+            subject = null;
+        }
     }
 }
